@@ -92,10 +92,86 @@ Between
 SELECT * FROM nama_table WHERE nama_kolom BETWEEN 101010 AND 101010;
 SELECT * FROM nama_table WHERE nama_kolom NOT BETWEEN 101010 AND 101010;
 
-
 In
 SELECT * FROM nama_table WHERE nama_kolom IN ('nilai1', 'nilai2');
 
 Order by
 SELECT * FROM nama_table ORDER BY nama_kolom ASC, kolom_lain DESC;
 
+Limit
+SELECT * FROM nama_table WHERE nama_kolom <>= kondisi ORDER BY nama_kolom LIMIT 2;
+SELECT * FROM nama_tabel LIMIT 10;
+SELECT * FROM nama_tabel LIMIT 10, 5;
+
+Distinct
+SELECT DISTINCT nama_kolom FROM nama_table;
+
+Aritmatik Operator
+% atau MOD
+*
++
+-
+/
+SELECT 10 + 10 AS hasil;
+SELECT kolom_satu, kolom_dua, DIV 1000 AS 'Price in K' FROM nama_table;
+
+Matematikal Function
+ABS()
+COS()
+PI()
+SIN()
+TAN()
+
+Auto Increment
+digunakan pada kolom pada pembuatan table
+lebih sering digunakan pada kolom id
+SELECT LAST_INSERT_ID(); // mendapatkan id terakhir
+
+String Function
+LOWER()
+LENGTH()
+UPPER()
+CONCAT()
+TRIM()
+
+Date Time Function
+EXTRACT()
+YEAR()
+MONTH()
+DATE()
+DAYNAME()
+
+Flow Control Function
+CASE 
+SELECT id, CASE nama_kolom WHEN "nilai satu lama" THEN "nilai satu baru" WHEN "nilai dua lama" THEN "nilai dua baru" ELSE "nilai lainnya" END FROM nama_table;
+
+IF()
+SELECT id, price, IF(price <= 15000, 'Murah', IF(price <= 20000, 'Mahal', 'Mahal Banget')) AS 'Mahal?' FROM nama_table;
+
+IFNULL(nama_kolom, "nilai baru")
+
+
+Aggregate Function
+COUNT()
+SUM()
+AVG()
+MIN()
+MAX()
+
+Grouping
+SELECT category, COUNT(id) AS 'Total Product' FROM nama_table GROUP BY category;
+
+Having Clause
+HAVING dan WHERE adalah kata kunci yang sama
+bedanya HAVING untuk alias
+
+Constraint
+UNIQUE KEY
+CREATE TABLE nama_table (id INT NOT NULL AUTO_INCREMENT, UNIQUE KEY nama_unik (nama_kolom));
+ALTER TABLE nama_table ADD CONSTRAINT nama_unik UNIQUE (nama_kolom);
+ALTER TABLE nama_table DROP CONSTRAINT nama_unik;
+
+Check Constraint
+CREATE TABLE nama_table (id INT NOT NULL AUTO_INCREMENT, price INT UNSIGNED NOT NULL, CONSTRAINT price_check CHECK(price >= 1000));
+ALTER TABLE nama_table ADD CONSTRAINT price_check CHECK(price >= 1000);
+ALTER TABLE nama_table DROP CONSTRAINT price_check;
