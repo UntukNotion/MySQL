@@ -175,3 +175,102 @@ Check Constraint
 CREATE TABLE nama_table (id INT NOT NULL AUTO_INCREMENT, price INT UNSIGNED NOT NULL, CONSTRAINT price_check CHECK(price >= 1000));
 ALTER TABLE nama_table ADD CONSTRAINT price_check CHECK(price >= 1000);
 ALTER TABLE nama_table DROP CONSTRAINT price_check;
+
+Foreign Key
+CREATE TABLE nama_table (
+id INT NOT NULL AUTO_INCREMENT, id_product VARCHAR(10) NOT NULL
+CONSTRAINT fk_wishlist_product FOREIGN KEY (id_product) REFERENCE products (id)
+) ENGINE = InnoDB; // kriteria id_product harus sama dengan id pada table product
+
+ALTER TABLE nama_table ADD CONSTRAINT fk_wishlist_product FOREIGN KEY (id_product) REFERENCE products (id);
+ALTER TABLE nama_table DROP CONSTRAINT fk_wishlist_product;
+
+Behavior Foreign Key = {
+    RESTRICT = {
+        ON DELETE = "Ditolak",
+        ON UPDATE = "Ditolak"
+    },
+    CASCADE = {
+        ON DELETE = "Data akan dihapus",
+        ON UPDATE = "Data akan ikut diubah"
+    },
+    NO ACTION = {
+        ON DELETE = "Data dibiarkan",
+        ON UPDATE = "Data dibiarkan"
+    },
+    SET NULL = {
+        ON DELETE = "Diubah jadi NULL",
+        ON UPDATE = "Diubah jadi NULL"
+    }
+}
+
+Mengubah Behavior
+ALTER TABLE nama_table ADD CONSTRAINT fk_wishlist_product
+FOREIGN KEY (id_product) REFERENCE products (id) ON DELETE CASCADE ON UPDATE CASCADE;  // On Delete dan On Update diubah berbarengan
+
+Join
+Dua Table
+SELECT * FROM wishlist JOIN products ON (wishlist.id_product = products.id);
+SELECT wishlist.id, products.id, products.name, wishlist.description FROM wishlist JOIN products ON (wishlist.id_product = products.id);
+SELECT w.id, p.id, p.name, w.description FROM wishlist AS w JOIN products AS p ON (w.id_product = p.id);
+SELECT w.id AS wishlist_id, p.id AS prod_id, p.name AS prod_name, w.description AS wishlist_desc FROM wishlist AS w JOIN products AS p ON (w.id_product = p.id);
+
+Tiga Table
+SELECT c.email, p.id, p.name, w.description FROM wishlist AS w JOIN products AS p ON (w.id_product = p.id) JOIN customers AS c ON (w.id_customer = c.id);
+
+One to One Relationship
+- Harus memiliki Foreign Key
+- Harus memiliki Unique Key agar data tidak duplikat
+
+One to Many Relationship
+- Harus memiliki Foreign Key'
+- Tidak harus memiliki Unique key
+
+Many to Many Relationship
+- Harus memiliki Table perantara (ketiga)
+- Table ketiga harus reference ke table lainnya
+
+Melihat data 
+SELECT * FROM orders JOIN orders_detail ON (orders_detail.id_order = orders.id) JOIN products ON (orders_detail.id_product = products.id);
+
+Join
+Inner Join
+Left Join
+Right Join
+Cross Join
+
+Subqueries
+SELECT * FROM products WHERE price > (SELECT AVG(price) FROM products);
+SELECT MAX(cp.price) FROM (SELECT price FROM categories JOIN products ON (products.id_category = categories.id)) as cp;
+
+Union
+(query table satu) UNION (query table dua); // jika dua table terdapat data duplikat maka akan dihapus
+(query table satu) UNION ALL (query table dua); // jika dua table terdapat data duplikat maka akan ditampilkan
+SELECT DISTINCT email FROM customers WHERE email IN (SELECT DISTINCT email FROM guestbooks);  // intersect adalah inner join
+SELECT DISTINCT customers.email FROM customers INNER JOIN guestbooks ON (guestbooks.email = customers.email); // intersect juga
+SELECT DISTINCT customers.email, guestbooks.email FROM customers LEFT JOIN guestbooks ON (customers.email = guestbooks.email) WHERE guestbooks.email IS NULL; // minus adalah left join
+
+Transaction (Locking Otomatis)
+START TRANSACTION
+COMMIT
+ROLLBACK
+
+Locking Manual
+SELECT FOR UPDATE; // hasil select akan keluar jika user lain selesai transaction
+
+Lock Table (Satu table saja)
+LOCK TABLE produts READ;  // user lain hanya bisa read
+LOCK TABLE produts WRITE; // user lain tidak bisa read dan write
+UNLOCK TABLES;
+
+Lock Instance (Satu Database)
+LOCK INSTANCE FOR BACKUP; // hanya bisa READ, DDL dan DML tidak bisa
+UNLOCK INSTANCE;
+
+BackUp Database
+perintah
+mysqldump nama_database --user --root --password --result-file=/path/file/tujuan/nama_file.sql
+mysqldump nama_database --user=nama_pengguna --password=kata_sandi --result-file=/path/file/tujuan/nama_file.sql
+
+Restore hasil backup
+mysql --user=nama_pengguna --password=kata_sandi nama_database < /path/file/tujuan/nama_file.sql
